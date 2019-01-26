@@ -1,0 +1,465 @@
+{
+  "observerUrl": "./preview/dist/facebook-feed-observer.js",
+  "preferences": {
+    "previewUpdateTimeout": 0,
+    "enableCustomCSS": true
+  },
+  "settings": {
+    "tabs": [
+      {
+        "id": "source",
+        "name": "Source",
+        "active": true
+      },
+      {
+        "id": "layout",
+        "name": "Layout"
+      },
+      {
+        "id": "advanced",
+        "name": "More"
+      }
+    ],
+    "properties": [
+      {
+        "id": "userAccessToken",
+        "name": "Facebook connection",
+        "tab": "source",
+        "type": "custom",
+        "custom": {
+          "type": "facebook-feed-token"
+        },
+        "defaultValue": "",
+        "description": "Set the Facebook access token of the user whose profile you want to display in the widget."
+      },
+      {
+        "id": "contentDivider",
+        "type": "divider",
+        "tab": "source"
+      },
+      {
+        "id": "sourceType",
+        "name": "Facebook source type",
+        "tab": "source",
+        "type": "select-inline",
+        "selectInline": {
+          "options": [
+            {
+              "value": "page",
+              "name": "Page"
+            },
+            {
+              "value": "profile",
+              "name": "Profile"
+            }
+          ]
+        },
+        "visible": false,
+        "defaultValue": "page",
+        "description": "Select Facebook source type you want to display in your widget: page or profile."
+      },
+      {
+        "id": "source",
+        "name": "Facebook public page URL or ID",
+        "tab": "source",
+        "type": "text",
+        "text": {
+          "button": true
+        },
+        "visible": false,
+        "defaultValue": "https://www.facebook.com/elfsight",
+        "description": "Set your Facebook public page URL or ID you want to display the information from in the widget."
+      },
+      {
+        "id": "width",
+        "name": "Width (px, %, auto)",
+        "tab": "layout",
+        "type": "text",
+        "defaultValue": "500",
+        "description": "Set the widget width in pixels. Or set \"auto\" to make it responsive."
+      },
+      {
+        "id": "height",
+        "name": "Height (px, auto)",
+        "tab": "layout",
+        "type": "text",
+        "defaultValue": "720",
+        "description": "Set the widget height in pixels. Set \"auto\" to make the widget adapt to content size."
+      },
+      {
+        "id": "contentDivider",
+        "type": "divider",
+        "tab": "layout"
+      },
+      {
+        "id": "layoutHeader",
+        "name": "Header",
+        "tab": "layout",
+        "type": "subgroup",
+        "subgroup": {
+          "properties": [
+            {
+              "id": "headerVisible",
+              "name": "Show header",
+              "type": "toggle",
+              "defaultValue": true,
+              "description": "Show/hide the header."
+            },
+            {
+              "id": "headerParts",
+              "name": "Header elements",
+              "type": "checklist",
+              "checklist": {
+                "options": [{
+                  "value": "cover",
+                  "name": "Cover picture"
+                },
+                  {
+                    "value": "actions",
+                    "name": "Actions"
+                  },
+                  {
+                    "value": "picture",
+                    "name": "Page picture"
+                  },
+                  {
+                    "value": "likesCount",
+                    "name": "Likes count"
+                  }
+                ]
+              },
+              "defaultValue" : ["cover", "actions", "picture", "likesCount"],
+              "description": "Choose the elements to show/hide in the header."
+            },
+            {
+              "id": "headerActions",
+              "name": "Actions",
+              "type": "complex",
+              "complex": {
+                "properties": [{
+                  "id": "type",
+                  "name": "Type",
+                  "type": "select",
+                  "select": {
+                    "options": [
+                      {
+                        "value": "like",
+                        "name": "Like"
+                      },
+                      {
+                        "value": "share",
+                        "name": "Share"
+                      }
+                    ]
+                  },
+                  "defaultValue": "like",
+                  "description": "Set the actions, available in the header."
+                }]
+              },
+              "allowEmpty": true,
+              "defaultValue": [
+                {
+                  "type": "like"
+                },
+                {
+                  "type": "share"
+                }
+              ],
+              "description": ""
+            }
+          ]
+        }
+      },
+      {
+        "id": "layoutMenu",
+        "name": "Menu",
+        "tab": "layout",
+        "type": "subgroup",
+        "subgroup": {
+          "properties": [
+            {
+              "id": "menuVisible",
+              "name": "Show menu",
+              "type": "toggle",
+              "defaultValue": true,
+              "description": "Show/hide the widget menu."
+            }
+          ]
+        }
+      },
+      {
+        "id": "contentDivider",
+        "type": "divider",
+        "tab": "layout"
+      },
+      {
+        "id": "layoutContentPosts",
+        "name": "Posts",
+        "tab": "layout",
+        "type": "subgroup",
+        "subgroup": {
+          "properties": [
+            {
+              "id": "contentPostsVisible",
+              "name": "Show posts",
+              "type": "toggle",
+              "defaultValue": true,
+              "description": "Show/hide the widget's posts tab."
+            },
+            {
+              "id": "contentPostsParts",
+              "name": "Posts info",
+              "type": "checklist",
+              "checklist": {
+                "options": [{
+                  "value": "author",
+                  "name": "Author"
+                },
+                  {
+                    "value": "likesCount",
+                    "name": "Likes Count"
+                  },
+                  {
+                    "value": "commentsCount",
+                    "name": "Comments Count"
+                  },
+                  {
+                    "value": "sharesCount",
+                    "name": "Shares Count"
+                  },
+                  {
+                    "value": "shareButton",
+                    "name": "Share Button"
+                  }
+                ]
+              },
+              "defaultValue" : ["author", "likesCount", "commentsCount", "sharesCount", "shareButton"],
+              "description": "Choose the elements to show/hide for each post in the widget."
+            },
+            {
+              "id": "contentPostsLimit",
+              "name": "Posts limit",
+              "type": "number",
+              "defaultValue": 0,
+              "description": "Set the number of posts to display."
+            }
+          ]
+        }
+      },
+      {
+        "id": "layoutContentPhotos",
+        "name": "Photos",
+        "tab": "layout",
+        "type": "subgroup",
+        "subgroup": {
+          "properties": [
+            {
+              "id": "contentPhotosVisible",
+              "name": "Show photos",
+              "type": "toggle",
+              "defaultValue": true,
+              "description": "Show/hide the widget's photos tab."
+            },
+            {
+              "id": "contentAlbumsVisible",
+              "name": "Show albums",
+              "type": "toggle",
+              "defaultValue": true,
+              "description": "Show/hide albums in the widget's photos tab."
+            }
+          ]
+        }
+      },
+      {
+        "id": "layoutContentVideos",
+        "name": "Videos",
+        "tab": "layout",
+        "type": "subgroup",
+        "subgroup": {
+          "properties": [
+            {
+              "id": "contentVideosVisible",
+              "name": "Show videos",
+              "type": "toggle",
+              "defaultValue": true,
+              "description": "Show/hide the widget's video tab."
+            },
+            {
+              "id": "contentVideosParts",
+              "name": "Videos info",
+              "type": "checklist",
+              "checklist": {
+                "options": [{
+                  "value": "description",
+                  "name": "Description"
+                },
+                  {
+                    "value": "likesCount",
+                    "name": "Likes Count"
+                  },
+                  {
+                    "value": "commentsCount",
+                    "name": "Comments Count"
+                  }
+                ]
+              },
+              "defaultValue": ["description", "likesCount", "commentsCount"],
+              "description": "Choose the elements to show/hide for each video in the widget."
+            }
+          ]
+        }
+      },
+      {
+        "id": "layoutContentEvents",
+        "name": "Events",
+        "tab": "layout",
+        "type": "subgroup",
+        "visible": false,
+        "subgroup": {
+          "properties": [
+            {
+              "id": "contentEventsVisible",
+              "name": "Show events",
+              "type": "toggle",
+              "defaultValue": false,
+              "description": "Show/hide the widget's events tab."
+            }
+          ]
+        }
+      },
+      {
+        "id": "contentDivider",
+        "type": "divider",
+        "tab": "layout"
+      },
+      {
+        "id": "layoutPopup",
+        "name": "Popup",
+        "tab": "layout",
+        "type": "subgroup",
+        "subgroup": {
+          "properties": [
+            {
+              "id": "contentPopupParts",
+              "name": "Popup info",
+              "type": "checklist",
+              "checklist": {
+                "options": [{
+                  "value": "author",
+                  "name": "Author"
+                },
+                  {
+                    "value": "likesCount",
+                    "name": "Likes Count"
+                  },
+                  {
+                    "value": "shareButton",
+                    "name": "Share Button"
+                  },
+                  {
+                    "value": "comments",
+                    "name": "Comments"
+                  }
+                ]
+              },
+              "defaultValue": ["author", "likesCount", "shareButton", "comments"],
+              "description": "Choose the elements to show/hide in the popup."
+            }
+          ]
+        }
+      },
+      {
+        "id": "lang",
+        "name": "Language",
+        "tab": "advanced",
+        "type": "select",
+        "select": {
+          "options": [
+            {
+              "value": "de",
+              "name": "Deutsch"
+            },
+            {
+              "value": "en",
+              "name": "English"
+            },
+            {
+              "value": "es",
+              "name": "Español"
+            },
+            {
+              "value": "fr",
+              "name": "Français"
+            },
+            {
+              "value": "ru",
+              "name": "Русский"
+            },
+            {
+              "value": "pt",
+              "name": "Português"
+            },
+            {
+              "value": "sv",
+              "name": "Svenska"
+            },
+            {
+              "value": "pl",
+              "name": "Polski"
+            },
+            {
+              "value": "no",
+              "name": "Norsk"
+            },
+            {
+              "value": "it",
+              "name": "Italiano"
+            },
+            {
+              "value": "hu",
+              "name": "Magyar"
+            },
+            {
+              "value": "fi",
+              "name": "Finnish"
+            },
+            {
+              "value": "dk",
+              "name": "Dansk"
+            },
+            {
+              "value": "tr",
+              "name": "Turkish"
+            },
+            {
+              "value": "ar",
+              "name": "Arabic"
+            },
+            {
+              "value": "lt",
+              "name": "Lithuanian"
+            },
+            {
+              "value": "cz",
+              "name": "Czech"
+            },
+            {
+              "value": "nl",
+              "name": "Dutch"
+            }
+          ]
+        },
+        "defaultValue": "en",
+        "description": "Choose one of 6 available languages of widget's UI."
+      },
+      {
+        "id": "cacheTime",
+        "name": "Cache Time (sec)",
+        "tab": "advanced",
+        "type": "text",
+        "defaultValue": "3600",
+        "description": "It defines how long data from Facebook will be cached in your browser. Set \"0\" to turn the cache off."
+      }
+    ]
+  }
+}
