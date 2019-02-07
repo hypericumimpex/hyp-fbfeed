@@ -70,7 +70,6 @@ if (!class_exists('ElfsightFacebookFeedApiCore')) {
             $curl = curl_init();
 
             $curl_options = array(
-                CURLOPT_HTTPHEADER     => $headers_raw_list,
                 CURLOPT_URL            => $url,
                 CURLOPT_HEADER         => true,
                 CURLOPT_RETURNTRANSFER => true,
@@ -79,6 +78,10 @@ if (!class_exists('ElfsightFacebookFeedApiCore')) {
                 CURLOPT_TIMEOUT        => 60,
                 CURLOPT_FOLLOWLOCATION => !empty($options['follow']) && $options['follow']
             );
+
+            if (!empty($headers_raw_list)) {
+                $curl_options[CURLOPT_HTTPHEADER] = $headers_raw_list;
+            }
 
             curl_setopt_array($curl, $curl_options);
 

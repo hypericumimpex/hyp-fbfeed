@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) exit;
             <?php _e('Back to list', $this->textDomain); ?>
         </a>
 
-        <h2 class="elfsight-admin-page-edit-widget-title-add"><?php _e('Add Widget', $this->textDomain); ?></h2>
+        <h2 class="elfsight-admin-page-edit-widget-title-add"><?php _e('Create Widget', $this->textDomain); ?></h2>
 
         <h2 class="elfsight-admin-page-edit-widget-title-edit"><?php _e('Edit Widget', $this->textDomain); ?></h2>
 

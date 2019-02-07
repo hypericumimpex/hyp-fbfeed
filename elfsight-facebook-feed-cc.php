@@ -3,7 +3,7 @@
 Plugin Name: HYP Facebook Feed
 Description: Make your Facebook content (Posts, Photos, Videos) work on your website
 Plugin URI: https://github.com/hypericumimpex/hyp-fbfeed/
-Version: 1.9.3
+Version: 1.9.4
 Author: Elfsight
 Author URI: https://github.com/hypericumimpex/
 */
@@ -31,7 +31,7 @@ new ElfsightFacebookFeedPlugin(array(
         'name' => 'Facebook Feed',
         'description' => 'Make your Facebook content (Posts, Photos, Videos) work on your website',
         'slug' => 'elfsight-facebook-feed',
-        'version' => '1.9.3',
+        'version' => '1.9.4',
         'text_domain' => 'elfsight-facebook-feed',
         'editor_settings' => $elfsight_facebook_feed_config['settings'],
         'editor_preferences' => $elfsight_facebook_feed_config['preferences'],

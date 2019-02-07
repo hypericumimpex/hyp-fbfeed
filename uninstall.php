@@ -15,7 +15,7 @@ function get_option_name($name) {
 if (get_option(get_option_name('activated')) || get_option(get_option_name('purchase_code'))) {
 	$ch = curl_init();
 
-	curl_setopt($ch, CURLOPT_URL, 'https://a.elfsight.com/updates/v1/?action=deactivate&slug=' . PLUGIN_SLUG . '-cc&host=' . parse_url(site_url(), PHP_URL_HOST) . '&version=1.9.3&purchase_code=' . get_option(get_option_name('purchase_code')));
+	curl_setopt($ch, CURLOPT_URL, 'https://a.elfsight.com/updates/v1/?action=deactivate&slug=' . PLUGIN_SLUG . '-cc&host=' . parse_url(site_url(), PHP_URL_HOST) . '&version=1.9.4&purchase_code=' . get_option(get_option_name('purchase_code')));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 	curl_exec($ch);

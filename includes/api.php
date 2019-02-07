@@ -3,86 +3,74 @@
 if (!defined('ABSPATH')) exit;
 
 
-require_once(plugin_dir_path(__FILE__) . '/api-tokens.php');
+require_once(plugin_dir_path(__FILE__) . '/api-usage.php');
 
 if (!class_exists('ElfsightFacebookFeedApi')) {
 	class ElfsightFacebookFeedApi extends ElfsightFacebookFeedApiCore {
-		private $tokens;
-
 		private $routes = array(
 			'' => 'requestController'
 		);
 
-		public $token;
+		private $usage;
 
 		public function __construct($config) {
 			parent::__construct($config, $this->routes);
 
-			$this->tokens = new ElfsightFacebookFeedApiTokens($this->helper, $config);
-			$this->token = $this->tokens->setCurrent();
+			$this->usage = new ElfsightFacebookFeedApiUsage($this->helper, $config);
 		}
 
 		public function requestController() {
 			$q = $this->input('q');
 
 			$cache_key = $this->cache->key($q, array('access_token', 'fields'));
-			$data = $this->cache->get($cache_key);
+			$cache_data = $this->cache->get($cache_key);
 
-			if (empty($data)) {
-				if (!$this->tokens->isLimited($this->token, 90)) {
-					$request_url = $this->buildRequestUrl($q);
+            $data = array();
+            $app_usage = array();
 
-					$response = $this->request('GET', $request_url);
+			if (empty($cache_data)) {
+                if (!$this->usage->isLimited(75)) {
+                    $request_url = $this->buildRequestUrl($q);
 
-					if (!empty($response)) {
-						if (!empty($response['headers']) && !empty($response['headers']['x-app-usage'])) {
-							$app_usage = json_decode($response['headers']['x-app-usage'], true);
+                    $response = $this->request('GET', $request_url);
 
-							$this->tokens->update($this->token, $app_usage);
+                    if (!empty($response)) {
+                        if (!empty($response['headers']) && !empty($response['headers']['x-app-usage'])) {
+                            $app_usage = json_decode($response['headers']['x-app-usage'], true);
 
-							if (!empty($response['body'])) {
-								$result = json_decode($response['body'], true);
+                            $this->usage->update($app_usage);
+                        }
 
-								if (!empty($result['error'])) {
-									$error = $result['error'];
+                        if (!empty($response['body'])) {
+                            $data = json_decode($response['body'], true);
 
-									switch($error['code']) {
-										case 4:
-											$this->token = $this->tokens->setCurrent();
-											return $this->requestController();
-										case 190:
-											$this->tokens->update($this->token, 'deleted');
-											$this->token = $this->tokens->setCurrent();
-											return $this->requestController();
+                            if (!empty($data['error'])) {
+                                $error = $data['error'];
+                                return $this->fbError($error['code'], $error['type'] . ': ' . $error['message']);
+                            }
+                        }
 
-										default:
-											break;
-									}
-								}
-							}
-						}
+                        if (!empty($response['http_code']) && $response['http_code'] === '200') {
+                            $this->cache->set($cache_key, json_encode($data));
+                        }
 
-						if (!empty($response['body'])) {
-							$data = $response['body'];
-						}
+                    } else {
+                        return $this->error();
+                    }
+                } else {
+                    $data = $this->cache->get($cache_key, false);
 
-						if (!empty($response['http_code']) && $response['http_code'] === '200') {
-							$this->cache->set($cache_key, $data);
-						}
+                    if (empty($data)) {
+                        return $this->fbError(4, '(#4) Application request limit reached');
+                    }
+                }
+			} else {
+                $data = json_decode($cache_data, true);
+            }
 
-					} else {
-						return $this->error();
-					}
-				} else {
-					$data = $this->cache->get($cache_key, false);
+            $result = array_merge($data, array('usage' => $app_usage));
 
-					if (empty($data)) {
-						return $this->fbError(4, '(#4) Application request limit reached');
-					}
-				}
-			}
-
-			return $this->response($data, true);
+			return $this->response(json_encode($result), true);
 		}
 
 		public function fbError($code, $message, $fbtrace_id = null) {
@@ -101,8 +89,6 @@ if (!class_exists('ElfsightFacebookFeedApi')) {
 		}
 
 		public function buildRequestUrl(&$url) {
-			$url = $this->helper->removeQueryParam($url, 'access_token');
-			$url = $this->helper->addQueryParam($url, 'access_token', $this->token['token']);
 			$url = $this->helper->addQueryParam($url, 'locale', 'en_US');
 
 			if (stripos($url, 'https://graph.facebook.com') === false) {

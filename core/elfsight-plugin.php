@@ -60,7 +60,7 @@ if (!class_exists('ElfsightFacebookFeedPlugin')) {
             add_action('widgets_init', array($this, 'registerWidget'));
 
             add_action('init', array($this, 'initBlock'));
-            add_action('admin_init', array($this, 'enqueueBlockAssets'));
+            add_action('enqueue_block_editor_assets', array($this, 'enqueueBlockAssets'));
         }
 
         public function initBlock() {
@@ -78,8 +78,8 @@ if (!class_exists('ElfsightFacebookFeedPlugin')) {
 
         public function enqueueBlockAssets() {
             if (function_exists('register_block_type')) {
-                wp_enqueue_script($this->slug . '-block-editor-js', plugins_url('assets/elfsight-block.js', $this->pluginFile), array('wp-blocks', 'wp-i18n', 'wp-element'), $this->version, true);
-                wp_enqueue_style($this->slug . '-block-editor-css', plugins_url('assets/elfsight-block.css', $this->pluginFile), array('wp-edit-blocks'), $this->version);
+                wp_enqueue_script($this->slug . '-block-editor-js', plugins_url('assets/elfsight-block.js', $this->pluginFile), array(), $this->version, true);
+                wp_enqueue_style($this->slug . '-block-editor-css', plugins_url('assets/elfsight-block.css', $this->pluginFile), array(), $this->version);
 
                 wp_enqueue_script($this->slug, $this->scriptUrl, array($this->slug . '-block-editor-js'), $this->version, true);
             }
@@ -88,27 +88,21 @@ if (!class_exists('ElfsightFacebookFeedPlugin')) {
         public function printAssets() {
             $force_script_add = get_option($this->getOptionName('force_script_add'));
 
-            $uploads_dir_params = wp_upload_dir();
-            $uploads_dir = $uploads_dir_params['basedir'] . '/' . $this->slug;
-            $uploads_url = $uploads_dir_params['baseurl'] . '/' . $this->slug;
-
-            wp_register_script($this->slug, $this->scriptUrl, array(), $this->version);
-            wp_register_script($this->slug . '-custom', $uploads_url . '/' . $this->slug . '-custom.js', array(), $this->version);
-
-            wp_register_style($this->slug . '-custom', $uploads_url . '/' . $this->slug . '-custom.css', array(), $this->version);
-
             if ($this->isShortcodePresent || $force_script_add === 'on') {
+                $uploads_dir_params = wp_upload_dir();
+                $uploads_dir = $uploads_dir_params['basedir'] . '/' . $this->slug;
+                $uploads_url = $uploads_dir_params['baseurl'] . '/' . $this->slug;
                 $custom_css_path = $uploads_dir . '/' . $this->slug . '-custom.css';
                 $custom_js_path = $uploads_dir . '/' . $this->slug . '-custom.js';
 
-                wp_print_scripts($this->slug);
+                wp_enqueue_script($this->slug, $this->scriptUrl, array(), $this->version);
 
                 if (is_readable($custom_js_path) && filesize($custom_js_path) > 0) {
-                    wp_print_scripts($this->slug . '-custom');
+                    wp_enqueue_script($this->slug . '-custom', $uploads_url . '/' . $this->slug . '-custom.js', array(), $this->version);
                 }
 
                 if (is_readable($custom_css_path) && filesize($custom_css_path) > 0) {
-                    wp_print_styles($this->slug . '-custom');
+                    wp_enqueue_style($this->slug . '-custom', $uploads_url . '/' . $this->slug . '-custom.css', array(), $this->version);
                 }
             }
         }
@@ -117,8 +111,8 @@ if (!class_exists('ElfsightFacebookFeedPlugin')) {
             foreach($properties as $property) {
                 if (isset($property['type']) && $property['type'] == 'subgroup') {
                     $defaults = $this->recursiveDefaults($property['subgroup']['properties'], $defaults);
-                } elseif (isset($property['id'])) {
-                    $defaults[$property['id']] = !empty($property['defaultValue']) ? $property['defaultValue'] : null;
+                } else if (isset($property['id']) && isset($property['defaultValue'])) {
+                    $defaults[$property['id']] = $property['defaultValue'];
                 }
             }
 
@@ -127,6 +121,23 @@ if (!class_exists('ElfsightFacebookFeedPlugin')) {
 
         public function addShortcode($atts) {
             $this->isShortcodePresent = true;
+
+            $attsKey['true'] = array_keys($atts, 'true', true);
+            $attsKey['false'] = array_keys($atts, 'false', true);
+
+            if (!empty($attsKey['true']) || !empty($attsKey['false'])) {
+                foreach ($attsKey as $bool => $arKey) {
+                    foreach ($arKey as $key) {
+                        if ($bool == 'false') {
+                            $atts[$key] = false;
+                        } else {
+                            $atts[$key] = true;
+                        }
+                    }
+                }
+
+                unset($attsKey);
+            }
 
             $atts = $atts ? $this->formatAtts($atts) : $atts;
             $widget_id = !empty($atts['id']) ? $atts['id'] : null;
