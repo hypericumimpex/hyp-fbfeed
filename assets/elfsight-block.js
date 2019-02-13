@@ -1,7 +1,7 @@
 /*
     Elfsight Facebook Feed
-    Version: 1.9.4
-    Release date: Fri Feb 01 2019
+    Version: 1.9.6
+    Release date: Wed Feb 13 2019
 
     https://elfsight.com
 

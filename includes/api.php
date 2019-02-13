@@ -19,16 +19,15 @@ if (!class_exists('ElfsightFacebookFeedApi')) {
 			$this->usage = new ElfsightFacebookFeedApiUsage($this->helper, $config);
 		}
 
-		public function requestController() {
-			$q = $this->input('q');
+        public function requestController() {
+            $q = $this->input('q');
 
-			$cache_key = $this->cache->key($q, array('access_token', 'fields'));
-			$cache_data = $this->cache->get($cache_key);
+            $cache_key = $this->cache->key($q, array('access_token', 'fields'));
+            $cache_data = $this->cache->get($cache_key);
 
             $data = array();
-            $app_usage = array();
 
-			if (empty($cache_data)) {
+            if (empty($cache_data)) {
                 if (!$this->usage->isLimited(75)) {
                     $request_url = $this->buildRequestUrl($q);
 
@@ -42,7 +41,7 @@ if (!class_exists('ElfsightFacebookFeedApi')) {
                         }
 
                         if (!empty($response['body'])) {
-                            $data = json_decode($response['body'], true);
+                            $data = $response['body'];
 
                             if (!empty($data['error'])) {
                                 $error = $data['error'];
@@ -51,7 +50,7 @@ if (!class_exists('ElfsightFacebookFeedApi')) {
                         }
 
                         if (!empty($response['http_code']) && $response['http_code'] === '200') {
-                            $this->cache->set($cache_key, json_encode($data));
+                            $this->cache->set($cache_key, $data);
                         }
 
                     } else {
@@ -64,14 +63,12 @@ if (!class_exists('ElfsightFacebookFeedApi')) {
                         return $this->fbError(4, '(#4) Application request limit reached');
                     }
                 }
-			} else {
-                $data = json_decode($cache_data, true);
+            } else {
+                $data = $cache_data;
             }
 
-            $result = array_merge($data, array('usage' => $app_usage));
-
-			return $this->response(json_encode($result), true);
-		}
+            return $this->response($data, true);
+        }
 
 		public function fbError($code, $message, $fbtrace_id = null) {
             $error = array(

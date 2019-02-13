@@ -35,22 +35,24 @@ if (!class_exists('ElfsightFacebookFeedApiCoreUser')) {
         public function set($public_id, $data) {
             global $wpdb;
 
-            $user = array(
+            $user_data = array(
                 'public_id' => $public_id,
                 'data' => $data,
                 'updated_at' => time()
             );
 
+            $wpdb->show_errors();
+
             if ($this->exist($public_id)) {
                 $status = $wpdb->update(
                     $this->tableName,
-                    $user,
+                    $user_data,
                     array('public_id' => $public_id)
                 );
             } else {
                 $status = $wpdb->insert(
                     $this->tableName,
-                    $user
+                    $user_data
                 );
             }
 
